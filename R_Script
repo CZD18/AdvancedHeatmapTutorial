@@ -1,0 +1,19 @@
+# This is a Script for TCGA Data Analysis using R, adapted from https://www.biostars.org/p/153013/ , for only-tumor data analysis
+# Download the data from TCGA from the http://gdac.broadinstitute.org/ , selecting the cases of cancer, i this example I will be using SKCM data
+# Download the data lluminahiseq_rnaseqv2-RSEM_genes_normalized (MD5) and Merge_Clinical (MD5)
+# From here it is following the instructions from https://www.biostars.org/p/153013/ - The information was stored in folders named RNA_data and Clin_data
+setwd("~/SKCM")
+library(survival)
+
+# Read the files 
+rna <- read.table('RNA_data/SKCM.rnaseqv2__illuminahiseq_rnaseqv2__unc_edu__Level_3__RSEM_genes_normalized__data.data.txt',nrows=20533, header=T,row.names=1,sep='\t')
+# and also remove the first row
+rna <- rna[-1,]
+# And the clinical data
+clinical <- t(read.table('Clin_data/SKCM.merged_only_clinical_clin_format.txt',header=T, row.names=1, sep='\t'))
+
+# In the case of the exmaple they remove the genes which expression is 0 in more than 50% of the samples, in our case some of these genes are what we are looking for, so I will just keep the entire information
+# In this example, only-tumor samples are going to be considered for the analysis, so I will keep only tumor samples (Read https://docs.gdc.cancer.gov/Encyclopedia/pages/TCGA_Barcode/)
+
+RNA[table(substr(colnames(rna),14,14))] <- NULL 
+
